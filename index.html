@@ -14,12 +14,9 @@
         ></script>
     </head>
     <body>
-        <py-script>
-            # This demonstrates that the script is loaded successfully.
-            print("PyScript is working!")
-        </py-script>
-
-        <!-- Load the calendar module -->
+        <script type="mpy" terminal>
+            print("py-scrpt")
+        </script>
         <script
             type="mpy"
             src="https://raw.githubusercontent.com/python/cpython/refs/heads/main/Lib/calendar.py"
@@ -28,13 +25,10 @@
             type="mpy"
             src="https://raw.githubusercontent.com/python/cpython/refs/heads/3.10/Lib/enum.py"
         ></script>
-        <!-- Use the calendar module -->
-        <py-script>
+        <script type="mpy" terminal>
             import calendar
-
-            # Create a text calendar for 2025
             cal = calendar.TextCalendar()
             print(cal.formatyear(2025, 2, 1, 8, 3))
-        </py-script>
+        </script>
     </body>
 </html>
