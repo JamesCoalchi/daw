@@ -21,6 +21,7 @@
             padding: 10px;
             overflow-y: auto;
             font-family: monospace;
+            white-space: pre-wrap;
         }
 
         #input {
@@ -66,7 +67,7 @@
 
         async function loadPyodideAndSetup() {
             pyodide = await loadPyodide();
-            pyodide.runPython(`import sys\nfrom js import console\nclass StdoutWrapper:\n    def write(self, text):\n        if text.strip():\n            console.log(text)\n    def flush(self):\n        pass\nsys.stdout = StdoutWrapper()`);
+            pyodide.runPython(`import sys\nfrom js import console\nclass StdoutWrapper:\n    def write(self, text):\n        if text.strip():\n            from js import document\n            terminal = document.getElementById('terminal')\n            terminal.textContent += text\n    def flush(self):\n        pass\nsys.stdout = StdoutWrapper()`);
             const terminal = document.getElementById('terminal');
             terminal.textContent += 'Pyodide loaded. You can now run Python code.\n';
         }
