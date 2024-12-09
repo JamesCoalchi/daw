@@ -74,10 +74,8 @@
         <input type="text" id="code" placeholder="Enter Python code here...">
         <button id="run">Run</button>
     </div>
-
     <script>
         let pyodide;
-
         async function loadPyodideAndSetup() {
             pyodide = await loadPyodide();
             pyodide.runPython(`import sys
@@ -96,20 +94,16 @@ class StdoutWrapper:
         pass
 sys.stdout = StdoutWrapper()`);
             const terminal = document.getElementById('terminal');
-            terminal.textContent += 'Pyodide loaded. You can now run Python code.\n';
+            terminal.textContent += 'Pyodide loaded.\n';
         }
-
         async function runPythonCode() {
             const codeInput = document.getElementById('code');
             const code = codeInput.value.trim();
             if (!code) return;
-
             const terminal = document.getElementById('terminal');
             const inputElement = document.createElement('div');
             inputElement.textContent = `>>> ${code}`;
-            inputElement.classList.add('fade-in');
             terminal.appendChild(inputElement);
-
             try {
                 const result = pyodide.runPython(code);
                 if (result !== undefined) {
@@ -125,18 +119,15 @@ sys.stdout = StdoutWrapper()`);
                 errorElement.classList.add('fade-in');
                 terminal.appendChild(errorElement);
             }
-
             terminal.scrollTop = terminal.scrollHeight;
             codeInput.value = '';
         }
-
         document.getElementById('run').addEventListener('click', runPythonCode);
         document.getElementById('code').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 runPythonCode();
             }
         });
-
         loadPyodideAndSetup();
     </script>
 </body>
