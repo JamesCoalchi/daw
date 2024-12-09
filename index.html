@@ -107,6 +107,7 @@ sys.stdout = StdoutWrapper()`);
             const terminal = document.getElementById('terminal');
             const inputElement = document.createElement('div');
             inputElement.textContent = `>>> ${code}`;
+            inputElement.classList.add('fade-in');
             terminal.appendChild(inputElement);
 
             try {
@@ -135,6 +136,7 @@ sys.stdout = StdoutWrapper()`);
                 runPythonCode();
             }
         });
+
         loadPyodideAndSetup();
     </script>
 </body>
