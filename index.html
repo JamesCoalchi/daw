@@ -52,6 +52,19 @@
         #run:hover {
             background: #005a9e;
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 </head>
@@ -67,18 +80,23 @@
 
         async function loadPyodideAndSetup() {
             pyodide = await loadPyodide();
-            pyodide.runPython(`import sys\nfrom js import console\nclass StdoutWrapper:\n    def write(self, text):\n        if text.strip():\n            from js import document\n            terminal = document.getElementById('terminal')\n            terminal.textContent += text\n    def flush(self):\n        pass\nsys.stdout = StdoutWrapper()`);
+            pyodide.runPython(`import sys
+from js import console
+class StdoutWrapper:
+    def write(self, text):
+        if text.strip():
+            from js import document
+            terminal = document.getElementById('terminal')
+            messageElement = document.createElement('div')
+            messageElement.textContent = text
+            messageElement.classList.add('fade-in')
+            terminal.appendChild(messageElement)
+            terminal.scrollTop = terminal.scrollHeight
+    def flush(self):
+        pass
+sys.stdout = StdoutWrapper()`);
             const terminal = document.getElementById('terminal');
             terminal.textContent += 'Pyodide loaded. You can now run Python code.\n';
-        }
-
-        function logToTerminal(message, isError = false) {
-            const terminal = document.getElementById('terminal');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = message;
-            messageElement.style.color = isError ? 'red' : 'inherit';
-            terminal.appendChild(messageElement);
-            terminal.scrollTop = terminal.scrollHeight;
         }
 
         async function runPythonCode() {
@@ -87,15 +105,25 @@
             if (!code) return;
 
             const terminal = document.getElementById('terminal');
-            terminal.textContent += `\n>>> ${code}\n`;
+            const inputElement = document.createElement('div');
+            inputElement.textContent = `>>> ${code}`;
+            inputElement.classList.add('fade-in');
+            terminal.appendChild(inputElement);
 
             try {
                 const result = pyodide.runPython(code);
                 if (result !== undefined) {
-                    terminal.textContent += `${result}\n`;
+                    const resultElement = document.createElement('div');
+                    resultElement.textContent = result;
+                    resultElement.classList.add('fade-in');
+                    terminal.appendChild(resultElement);
                 }
             } catch (error) {
-                terminal.textContent += `${error}\n`;
+                const errorElement = document.createElement('div');
+                errorElement.textContent = error;
+                errorElement.style.color = 'red';
+                errorElement.classList.add('fade-in');
+                terminal.appendChild(errorElement);
             }
 
             terminal.scrollTop = terminal.scrollHeight;
