@@ -87,7 +87,7 @@
             if (!code) return;
 
             const terminal = document.getElementById('terminal');
-            terminal.textContent += `>>> ${code}\n`;
+            terminal.textContent += `\n>>> ${code}\n`;
 
             try {
                 const result = pyodide.runPython(code);
