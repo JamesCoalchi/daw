@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>PyScript with Calendar</title>
+        <link
+            rel="stylesheet"
+            href="https://pyscript.net/snapshots/2024.9.2/core.css"
+        />
+        <script
+            type="module"
+            src="https://pyscript.net/snapshots/2024.9.2/core.js"
+        ></script>
+    </head>
+    <body>
+        <py-script>
+            # This demonstrates that the script is loaded successfully.
+            print("PyScript is working!")
+        </py-script>
+
+        <!-- Load the calendar module -->
+        <script
+            type="mpy"
+            src="https://raw.githubusercontent.com/<username>/<repo>/<branch>/scripts/calendar.py"
+        ></script>
+
+        <!-- Use the calendar module -->
+        <py-script>
+            import calendar
+
+            # Create a text calendar for 2025
+            cal = calendar.TextCalendar()
+            print(cal.formatyear(2025, 2, 1, 8, 3))
+        </py-script>
+    </body>
+</html>
