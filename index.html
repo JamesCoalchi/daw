@@ -72,9 +72,7 @@
     <div id="terminal"></div>
     <div id="input">
         <input type="text" id="code" placeholder="Enter Python code here...">
-        <input type="text" id="url" placeholder="Enter URL here...">
         <button id="run">Run</button>
-        <button id="run_url">Run From URL</button>
     </div>
 
     <script>
@@ -102,55 +100,41 @@ sys.stdout = StdoutWrapper()`);
         }
 
         async function runPythonCode() {
-    const codeInput = document.getElementById('code');
-    const urlInput = document.getElementById('url');
-    let code = codeInput.value.trim();
+            const codeInput = document.getElementById('code');
+            const code = codeInput.value.trim();
+            if (!code) return;
 
-    if (!code && urlInput.value.trim()) {
-        try {
-            const response = await fetch(urlInput.value.trim());
-            if (response.ok) {
-                code = await response.text();
-            } else {
-                throw new Error("Failed to fetch the URL");
+            const terminal = document.getElementById('terminal');
+            const inputElement = document.createElement('div');
+            inputElement.textContent = >>> ${code};
+            terminal.appendChild(inputElement);
+
+            try {
+                const result = pyodide.runPython(code);
+                if (result !== undefined) {
+                    const resultElement = document.createElement('div');
+                    resultElement.textContent = result;
+                    resultElement.classList.add('fade-in');
+                    terminal.appendChild(resultElement);
+                }
+            } catch (error) {
+                const errorElement = document.createElement('div');
+                errorElement.textContent = error;
+                errorElement.style.color = 'red';
+                errorElement.classList.add('fade-in');
+                terminal.appendChild(errorElement);
             }
-        } catch (error) {
-            const errorElement = document.createElement('div');
-            errorElement.textContent = error.message;
-            errorElement.style.color = 'red';
-            errorElement.classList.add('fade-in');
-            document.getElementById('terminal').appendChild(errorElement);
-            return;
+
+            terminal.scrollTop = terminal.scrollHeight;
+            codeInput.value = '';
         }
-    }
 
-    if (!code) return;
-
-    const terminal = document.getElementById('terminal');
-    const inputElement = document.createElement('div');
-    inputElement.textContent = `>>> ${code}`;
-    terminal.appendChild(inputElement);
-
-    try {
-        const result = pyodide.runPython(code);
-        if (result !== undefined) {
-            const resultElement = document.createElement('div');
-            resultElement.textContent = result;
-            resultElement.classList.add('fade-in');
-            terminal.appendChild(resultElement);
-        }
-    } catch (error) {
-        const errorElement = document.createElement('div');
-        errorElement.textContent = error;
-        errorElement.style.color = 'red';
-        errorElement.classList.add('fade-in');
-        terminal.appendChild(errorElement);
-    }
-
-    terminal.scrollTop = terminal.scrollHeight;
-    codeInput.value = '';
-    urlInput.value = '';
-}
+        document.getElementById('run').addEventListener('click', runPythonCode);
+        document.getElementById('code').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runPythonCode();
+            }
+        });
         loadPyodideAndSetup();
     </script>
 </body>
