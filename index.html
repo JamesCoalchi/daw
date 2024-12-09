@@ -1,34 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>PyScript with Calendar</title>
-        <link
-            rel="stylesheet"
-            href="https://pyscript.net/snapshots/2024.9.2/core.css"
-        />
-        <script
-            type="module"
-            src="https://pyscript.net/snapshots/2024.9.2/core.js"
-        ></script>
-    </head>
-    <body>
-        <script type="mpy" terminal>
-            print("py-scrpt")
-        </script>
-        <script
-            type="mpy"
-            src="https://raw.githubusercontent.com/python/cpython/refs/heads/main/Lib/calendar.py"
-        ></script>
-        <script
-            type="mpy"
-            src="https://raw.githubusercontent.com/python/cpython/refs/heads/3.10/Lib/enum.py"
-        ></script>
-        <script type="mpy" terminal>
-            import calendar
-            cal = calendar.TextCalendar()
-            print(cal.formatyear(2025, 2, 1, 8, 3))
-        </script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Terminal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #terminal {
+            flex: 1;
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+
+        #input {
+            display: flex;
+            border-top: 1px solid #555;
+        }
+
+        #code {
+            flex: 1;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 1rem;
+            border: none;
+            outline: none;
+            background: #333;
+            color: #fff;
+        }
+
+        #run {
+            padding: 10px;
+            background: #0078d7;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #run:hover {
+            background: #005a9e;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+</head>
+<body>
+    <div id="terminal"></div>
+    <div id="input">
+        <input type="text" id="code" placeholder="Enter Python code here...">
+        <button id="run">Run</button>
+    </div>
+    <script>
+        let pyodide;
+        async function loadPyodideAndSetup() {
+            pyodide = await loadPyodide();
+            logToTerminal('Pyodide loaded. You can now run Python code.');
+        }
+        function logToTerminal(message, isError = false) {
+            const terminal = document.getElementById('terminal');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.style.color = isError ? 'red' : 'inherit';
+            terminal.appendChild(messageElement);
+            terminal.scrollTop = terminal.scrollHeight; // Auto-scroll to the bottom
+        }
+        async function runPythonCode() {
+            const codeInput = document.getElementById('code');
+            const code = codeInput.value.trim();
+            if (!code) return;
+
+            logToTerminal(`>>> ${code}`);
+            try {
+                const result = pyodide.runPython(code);
+                logToTerminal(result);
+            } catch (error) {
+                logToTerminal(error.toString(), true);
+            }
+
+            codeInput.value = '';
+        }
+        document.getElementById('run').addEventListener('click', runPythonCode);
+        document.getElementById('code').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runPythonCode();
+            }
+        });
+        loadPyodideAndSetup();
+    </script>
+</body>
 </html>
